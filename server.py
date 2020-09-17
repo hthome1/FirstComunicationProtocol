@@ -5,7 +5,7 @@ from arquivo import Arquivo
 
 
 #arduinoDue
-serialName = "/dev/cu.usbmodemFD121"
+serialName = "COM6"
 
 
 def main():
@@ -26,13 +26,18 @@ def main():
         doingIt = True
 
         while doingIt == True:
+
             server.getHead()
+            print("head")
             server.getPayload()
+            print("payload")
             server.getEop()
+            print("eop")
             server.sendAcknowlage()
+            print("mando aknolage")
             server.joinPackages(server.payload)
             if server.package_index == (server.nPackage - 1):
-                doingIt == False
+                doingIt = False
 
 
         imageW = "./recebidaTeste.png"
@@ -55,6 +60,7 @@ def main():
     except:
         print("ops! :-\\")
         server.end()
+        print(" desa")
         
 if __name__ == "__main__":
     main()

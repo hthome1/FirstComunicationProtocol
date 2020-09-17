@@ -20,7 +20,7 @@ from arquivo import Arquivo
 
 
 #Uno
-serialName = "/dev/cu.usbmodemFA131"
+serialName = "COM7"
 
 
 def main():
@@ -31,6 +31,7 @@ def main():
 
         #imagem = input("Coloque o endereço da imagem que deseja enviar: ")
         imagem = "./imageB.png"
+        
 
 
         # Log
@@ -57,11 +58,13 @@ def main():
         indexPackageToBeSent = 0
         print(len(dividedPackages[indexPackageToBeSent]))
         while(indexPackageToBeSent < data.total_payloads ):
-            print("foi")
-            client.com.sendData(dividedPackages[indexPackageToBeSent])
+            print(indexPackageToBeSent)
+            client.sendPackage(dividedPackages[indexPackageToBeSent])
+            print("pacote enviado")
             client.getHead()
-            client.getPayload()
+            print("head")
             client.getEop()
+            print("eop")
             if client.acknolage_confirmartion == 1:
                 indexPackageToBeSent = client.error_package
                 print("-------------------------")
@@ -73,7 +76,6 @@ def main():
 
 
             
-        prunt
         # Encerra comunicação
         print("-------------------------")
         print("Comunicação Finalizada")
@@ -81,7 +83,7 @@ def main():
         client.end()
     except:
         print("ops! :-\\")
-        client.end()
+        client.com.disable()
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
 if __name__ == "__main__":

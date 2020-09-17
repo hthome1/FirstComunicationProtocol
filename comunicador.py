@@ -6,11 +6,11 @@ class Comunicador(object):
         self.serialName = serialName
         self.com = enlace(serialName)
         self.com.enable()
-        self.eop = (1234567890).to_bytes(4, byteorder="big")
+        self.eop = (78).to_bytes(4, byteorder="big")
         self.complete_payload = b""
 
     def getHead(self):
-        self.head = self.com.getData(10)
+        self.head, r = self.com.getData(10)
         self.message_type = self.head[0]
         self.hs_response = self.head[1]
         self.error_package = self.head[2]
@@ -18,14 +18,14 @@ class Comunicador(object):
         self.package_index = self.head[4]
         self.payload_size = self.head[5]
         self.acknolage_confirmartion = self.head[6]
-        print("vai")
 
     def getPayload(self):
-        self.payload = self.com.getData(self.payload_size)
-        print("vai")
+        self.payload, teste = self.com.getData(self.payload_size)
 
     def getEop(self):
-        self.eop_recebida = self.com.getData(4)
+        print(" manda")
+        self.eop_recebida, vau= self.com.getData(4)
+        print("mandou")
 
     def conferData(self):
         if self.payload_size == len(self.payload) and self.eop_recebida == self.eop:
@@ -48,6 +48,7 @@ class Comunicador(object):
 
         if self.conferData == False:
             error_package = (self.package_index).to_bytes(1, byteorder="big")
+            print("fudeu")
         else:
             error_package = (0).to_bytes(1, byteorder="big")
 

@@ -5,7 +5,7 @@
 
 class Arquivo(object):
     def __init__(self, arquivo):
-        self.eop = (123456789).to_bytes(4, byteorder="big")
+        self.eop = (78).to_bytes(4, byteorder="big")
         self.arquivo = arquivo
         self.arqFrag, self.total_payloads = self.frag(arquivo)
         self.index = 0
