@@ -19,25 +19,31 @@ def main():
         print('Porta Com habilitada')
         print("-------------------------")
         
-
-
-        #Parte do HandShake
-
+        hs = False
+       
+        while hs == False:
+            server.getHead()
+            server.getEop()
+            if server.message_type == 1:
+                print(" handshake respondido")
+                server.rogerHS()
+                hs = True 
+    
         doingIt = True
 
         while doingIt == True:
 
             server.getHead()
-            print("head")
             server.getPayload()
-            print("payload")
             server.getEop()
-            print("eop")
             server.sendAcknowlage()
-            print("mando aknolage")
-            server.joinPackages(server.payload)
-            if server.package_index == (server.nPackage - 1):
-                doingIt = False
+            if server.conferData():
+                print("Pacote recebido com sucesso ", server.package_index)
+                server.joinPackages(server.payload)
+                if server.package_index == (server.nPackage - 1):
+                    doingIt = False
+            
+            
 
 
         imageW = "./recebidaTeste.png"
@@ -60,7 +66,6 @@ def main():
     except:
         print("ops! :-\\")
         server.end()
-        print(" desa")
         
 if __name__ == "__main__":
     main()

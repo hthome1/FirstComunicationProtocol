@@ -41,11 +41,19 @@ class Arquivo(object):
 
     def setHeadDados(self):
         head = b""
+
+        # if self.index == 9:
+        #     package_index = (2).to_bytes(1, byteorder="big")
+        #     payload_size = (45).to_bytes(1, byteorder="big")
+        # else:
+        #     package_index = (self.index).to_bytes(1, byteorder="big")
+        #     payload_size = (self.getPayloadSize(self.index)).to_bytes(1, byteorder="big")
+        
         message_type = (2).to_bytes(1, byteorder="big")
         hs_response = (0).to_bytes(1, byteorder="big")
         error_package = (0).to_bytes(1, byteorder="big")
-        nPackage = (self.total_payloads).to_bytes(1, byteorder="big")
         package_index = (self.index).to_bytes(1, byteorder="big")
+        nPackage = (self.total_payloads).to_bytes(1, byteorder="big")
         payload_size = (self.getPayloadSize(self.index)).to_bytes(1, byteorder="big")
         acknolage_confirmartion = (0).to_bytes(1, byteorder="big")
         null_bytes = (0).to_bytes(3, byteorder="big")

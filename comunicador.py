@@ -8,6 +8,7 @@ class Comunicador(object):
         self.com.enable()
         self.eop = (78).to_bytes(4, byteorder="big")
         self.complete_payload = b""
+        self.lastPackage = -1
 
     def getHead(self):
         self.head, r = self.com.getData(10)
@@ -23,12 +24,11 @@ class Comunicador(object):
         self.payload, teste = self.com.getData(self.payload_size)
 
     def getEop(self):
-        print(" manda")
         self.eop_recebida, vau= self.com.getData(4)
-        print("mandou")
 
     def conferData(self):
-        if self.payload_size == len(self.payload) and self.eop_recebida == self.eop:
+        if self.payload_size == len(self.payload) and self.eop_recebida == self.eop and\
+        self.package_index == self.lastPackage + 1:
             return True
         else:
             return False
@@ -38,24 +38,26 @@ class Comunicador(object):
         pacote = b""
         message_type = (3).to_bytes(1, byteorder="big")
         hs_response = (0).to_bytes(1, byteorder="big")
-        # error_package = (self.package_index).to_bytes(1, byteorder="big")
-        nPackage = (0).to_bytes(1, byteorder="big")
+        #error_package = (self.package_index).to_bytes(1, byteorder="big")
+        nPackage = (self.nPackage).to_bytes(1, byteorder="big")
         package_index = (self.package_index).to_bytes(1, byteorder="big")
         payload_size = (0).to_bytes(1, byteorder="big")
-        acknolege_confirmation = (0).to_bytes(1, byteorder="big")
-        null_bytes = (0).to_bytes(4, byteorder="big")
+        null_bytes = (0).to_bytes(3, byteorder="big")
 
 
-        if self.conferData == False:
-            error_package = (self.package_index).to_bytes(1, byteorder="big")
-            print("fudeu")
+        if self.conferData() == False:
+            error_package = (self.lastPackage + 1).to_bytes(1, byteorder="big")
+            acknolege_confirmation = (1).to_bytes(1, byteorder="big")
+            print("-------------------")
+            print("O pacote {} esta corrompido".format(self.lastPackage + 1))
+            print("Pedindo o reenvio do pacote")
+            self.com.rx.clearBuffer()
         else:
             error_package = (0).to_bytes(1, byteorder="big")
-
-
-        head = message_type + hs_response + error_package + nPackage + package_index \
+            acknolege_confirmation = (0).to_bytes(1, byteorder="big")
+        self.headAc = message_type + hs_response + error_package + nPackage + package_index \
         + payload_size + acknolege_confirmation + null_bytes
-        pacote = head + self.eop
+        pacote = self.headAc + self.eop
         self.com.sendData(pacote)
         time.sleep(0.5)
 
@@ -102,6 +104,8 @@ class Comunicador(object):
         time.sleep(0.5)
 
     def joinPackages(self, payload):
+        self.lastPackage +=1 
         self.complete_payload += payload
+
         
         

@@ -1,4 +1,5 @@
 from arquivo import Arquivo
+import time
 
 path = "./imageB.png"
 arquivo = Arquivo(path)
@@ -19,9 +20,10 @@ x = arquivo.setPacotes()
 # print(x[0][9])
 
 
-for e in x:
-    print(e[3],e[4],e[5])
-    print(len(e))
 
+
+for e in range(0,100):
+    print("Daud bundao")
+    time.sleep(0.5)
 
 

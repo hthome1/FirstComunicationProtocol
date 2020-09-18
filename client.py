@@ -31,49 +31,71 @@ def main():
 
         #imagem = input("Coloque o endereço da imagem que deseja enviar: ")
         imagem = "./imageB.png"
-        
 
 
-        # Log
-        print("-------------------------")
-        print("Comunicação inicializada")
-        print("-------------------------")
+        # print("-------------------------")
+        # print("TESTANDO ERRO NO TAMANHO DO PAYLOAD")
+        # print("-------------------------")
 
 
-        print("-------------------------")
-        print ("Carregando imagem para transmissão :")
-        print("-------------------------")
-        
-        data = Arquivo(imagem)
-        dividedPackages = data.setPacotes()
 
 
 
         print("-------------------------")
-        print ("Imagem Pronta para ser enviada:")
+        print("Checking server avalability")
         print("-------------------------")
 
 
-        
-        indexPackageToBeSent = 0
-        print(len(dividedPackages[indexPackageToBeSent]))
-        while(indexPackageToBeSent < data.total_payloads ):
-            print(indexPackageToBeSent)
-            client.sendPackage(dividedPackages[indexPackageToBeSent])
-            print("pacote enviado")
-            client.getHead()
-            print("head")
-            client.getEop()
-            print("eop")
-            if client.acknolage_confirmartion == 1:
-                indexPackageToBeSent = client.error_package
-                print("-------------------------")
-                print("Erro no", indexPackageToBeSent)
-                print("Enviando novamente")
-                print("-------------------------")
+
+
+        onlineCheck = True
+        while onlineCheck == True:
+            client.sendHS()
+            print("Esperando resposta do servidor")
+            print("-------------------------")
+            time.sleep(2)
+            if client.com.rx.getIsEmpty() == True:
+                x = input("Sem resposta. Enviar Novamente (Y/N)")
+                if x == "N":
+                    onlineCheck = False
             else:
-                indexPackageToBeSent += 1
+                client.getHead()
+                client.getEop()
+                if client.hs_response == 1:
+                    onlineCheck = True
+                    
+                    # Log
+                    print("Comunicação inicializada")
+                    print("-------------------------")
 
+                    print("-------------------------")
+                    print ("Carregando imagem para transmissão :")
+                    print("-------------------------")
+                    
+                    data = Arquivo(imagem)
+                    dividedPackages = data.setPacotes()
+                    
+                    print("-------------------------")
+                    print ("Imagem Pronta para ser enviada:")
+                    print("-------------------------")
+
+                    indexPackageToBeSent = 0
+
+                    while(indexPackageToBeSent < data.total_payloads ):
+                        client.sendPackage(dividedPackages[indexPackageToBeSent])
+                        client.getHead()
+                        client.getEop()
+                        if client.acknolage_confirmartion == 1:
+                            indexPackageToBeSent = client.error_package
+                            print("-------------------------")
+                            print("Erro no", indexPackageToBeSent)
+                            print("Enviando novamente")
+                            print("-------------------------")
+                        else:
+                            print("Pacote {} de {}  enviado".format(indexPackageToBeSent, client.nPackage))
+                            indexPackageToBeSent += 1
+                    onlineCheck = False
+                    
 
             
         # Encerra comunicação
